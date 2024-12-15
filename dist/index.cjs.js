@@ -6,7 +6,7 @@ var defaultConfig = {
     prePunctuation: '([{·‘“〈《「『【〔〖（．［｛￡￥',
     postPunctuation: '!),.:;?]}¨·ˇˉ―‖’”…∶、。〃々〉》」』】〕〗！＂＇），．：；？］｀｜｝～￠',
     breakMaxChars: 3,
-    englishChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'",
+    englishChars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\'',
     englishMaxWrapChars: 5,
     hyphen: '-',
     fontFamily: 'Microsoft YaHei',
@@ -42,13 +42,14 @@ function textToPage$1(param) {
     const postPunctuationMap = strToMap(postPunctuation);
     const englishCharsMap = strToMap(englishChars);
     // 参数预处理
-    let _params = { ...param, rowNum: 0 };
+    const _params = { ...param, rowNum: 0 };
     _params.width = typeof _params.width !== 'number' ? Infinity : _params.width;
     _params.lineHeight = param.fontSize * param.lineHeight;
-    _params.rowNum = typeof param.height === 'number' ? Math.floor(param.height / _params.lineHeight) : Infinity;
+    _params.rowNum =
+        typeof param.height === 'number' ? Math.floor(param.height / _params.lineHeight) : Infinity;
     // console.log('rowNum: ', _params.rowNum, param.height)
-    let pages = []; // 存储每页信息
-    let len = _params.textArray.length;
+    const pages = []; // 存储每页信息
+    const len = _params.textArray.length;
     let page = 0;
     let rows = [];
     let row = 0;
@@ -56,8 +57,8 @@ function textToPage$1(param) {
     let rowWidth = 0;
     let curChar = '';
     let tempRowWidth = 0;
-    let breakMaxChars = defaultConfig.breakMaxChars;
-    let englishMaxWrapChars = defaultConfig.englishMaxWrapChars;
+    const breakMaxChars = defaultConfig.breakMaxChars;
+    const englishMaxWrapChars = defaultConfig.englishMaxWrapChars;
     let backCharInfo = false; // 回溯信息
     // 遍历字符分行分页
     for (let i = 0; i < len; i++) {
@@ -69,7 +70,7 @@ function textToPage$1(param) {
                 page,
                 startIndex: i,
                 endIndex: 0,
-                rows: []
+                rows: [],
             };
         }
         // 如果是新行，初始化新行数据
@@ -79,7 +80,7 @@ function textToPage$1(param) {
                 endIndex: 0,
                 chars: [],
                 empty: false,
-                completed: true
+                completed: true,
             };
         }
         // 如果是换行符，结束此行
@@ -133,7 +134,8 @@ function textToPage$1(param) {
                     }
                     i = backCharInfo.endIndex;
                 }
-                else if ( // 行尾前置符号
+                else if (
+                // 行尾前置符号
                 prePunctuationMap.has(curChar) &&
                     _params.textArray[i - 1] &&
                     _params.textArray[i - 1] !== '\r' &&
@@ -145,7 +147,8 @@ function textToPage$1(param) {
                     endRow(backCharInfo.endIndex);
                     i = backCharInfo.endIndex;
                 }
-                else if ( // 行尾连续英文
+                else if (
+                // 行尾连续英文
                 englishCharsMap.has(curChar) &&
                     _params.textArray[i - 1] &&
                     _params.textArray[i + 1] &&
@@ -164,13 +167,15 @@ function textToPage$1(param) {
                     curChar === ' ' &&
                     row &&
                     rows[row - 1].chars[rows[row - 1].chars.length - 1] !== ' ' &&
-                    _params.textArray[i + 1] !== ' ') { // 行首半角空格
+                    _params.textArray[i + 1] !== ' ') {
+                    // 行首半角空格
                     rows[row - 1].endIndex++;
                     rows[row - 1].chars.push(curChar);
                     // console.log(rows[row - 1].chars.length, row, curChar, i)
                     // console.log(tempRowWidth)
                 }
-                else { // 其余情况
+                else {
+                    // 其余情况
                     rowWidth = tempRowWidth;
                     rowChars[rowChars.length] = curChar;
                 }
@@ -187,7 +192,7 @@ function textToPage$1(param) {
         endRow(len - 1);
     }
     // 最后一页的最后一行不需要填充空隙
-    let tempRowLen = pages[page - 1].rows.length;
+    const tempRowLen = pages[page - 1].rows.length;
     pages[page - 1].rows[tempRowLen - 1].completed = false;
     // 对页和行进行章节偏移量处理
     for (let i = 0; i < page; i++) {
@@ -254,7 +259,7 @@ function textToPage$1(param) {
                 return {
                     prevPage,
                     prevRow,
-                    endIndex: index - 1
+                    endIndex: index - 1,
                 };
             }
         }
@@ -267,7 +272,7 @@ function textToPage$1(param) {
         // 如果不回溯，直接返回 i-1
         if (typeof _params.width !== 'number') {
             return {
-                endIndex: i - 1
+                endIndex: i - 1,
             };
         }
         // 否则深度回溯
@@ -277,7 +282,7 @@ function textToPage$1(param) {
         for (index = i - 1; index > start; index--) {
             if (!prePunctuationMap.has(_params.textArray[index])) {
                 return {
-                    endIndex: index
+                    endIndex: index,
                 };
             }
         }
@@ -289,7 +294,7 @@ function textToPage$1(param) {
     function validEnglishPreBack(i) {
         const temp = {
             endIndex: i - 1,
-            appendix: ''
+            appendix: '',
         };
         // 否则深度回溯
         let start = i - 1 - englishMaxWrapChars;
@@ -319,15 +324,15 @@ function textToPage$1(param) {
  */
 function measureChars(param) {
     var _a;
-    let s = Date.now();
-    let measures = {};
+    const s = Date.now();
+    const measures = {};
     [(_a = param.hyphen) !== null && _a !== void 0 ? _a : defaultConfig.hyphen, '中'].map(item => {
         measures[item] = param.ctx.measureText(item).width;
     });
     // 将文本转成数组，防止四字节字符问题
-    let textArray = [];
+    const textArray = [];
     // 测量字符宽度，填充文本数组
-    for (let item of param.text) {
+    for (const item of param.text) {
         textArray.push(item);
         if (!measures[item]) {
             measures[item] = param.ctx.measureText(item).width;
@@ -346,7 +351,7 @@ function measureChars(param) {
     console.log('measureChars + textArray:', Date.now() - s);
     return {
         textArray,
-        measures
+        measures,
     };
 }
 /**
@@ -378,13 +383,13 @@ function layout(param) {
                 x: 0,
                 y: 0,
                 width: 0,
-                height: 0
+                height: 0,
             },
             rowRect: {
                 x: 0,
                 y: 0,
                 width: 0,
-                height: 0
+                height: 0,
             },
         };
         // 先计算rowSpace，后面计算字符位置需要用到
@@ -392,7 +397,7 @@ function layout(param) {
             x: 0,
             y: row * _params.lineHeight,
             width: (_a = _params.lineWidth) !== null && _a !== void 0 ? _a : 0,
-            height: _params.lineHeight
+            height: _params.lineHeight,
         };
         // 如果是完整的一行，并且对齐是 justify，需要计算字间距，
         if (item.completed && _params.textAlign === 'justify' && _params.lineWidth) {
@@ -405,15 +410,15 @@ function layout(param) {
         // 计算字符位置
         const rowCharY = rowInfo.rowRect.y + (_params.lineHeight - _params.fontSize) / 2;
         item.chars.map((chara, index) => {
-            let position = {
+            const position = {
                 x: tempRowWidth,
                 y: rowCharY,
                 width: _params.measures[chara],
-                height: _params.fontSize
+                height: _params.fontSize,
             };
             rowInfo.chars[index] = {
                 char: chara,
-                position
+                position,
             };
             // 更新 tempRowWidth
             tempRowWidth += _params.measures[chara] + rowInfo.letterSpacing;
@@ -425,11 +430,12 @@ function layout(param) {
                 x: rowInfo.rowRect.x,
                 y: rowInfo.rowRect.y,
                 width: last ? last.position.x + last.position.width : 0,
-                height: rowInfo.rowRect.height
+                height: rowInfo.rowRect.height,
             };
         }
         // 以上是默认左对齐和两端对齐的计算，下面修正居中对齐和右对齐
-        if (rowInfo.rowRect.width && (_params.textAlign === 'center' || _params.textAlign === 'right')) {
+        if (rowInfo.rowRect.width &&
+            (_params.textAlign === 'center' || _params.textAlign === 'right')) {
             const offsetX = (rowInfo.rowRect.width - rowInfo.charsRect.width) / (_params.textAlign === 'right' ? 1 : 2);
             rowInfo.charsRect.x += offsetX;
             rowInfo.chars.map(item => {
@@ -456,7 +462,7 @@ class CanvasTextLayout {
         this.measuredData = measureChars({
             text: this.config.text,
             ctx: this.config.ctx,
-            hyphen: this.config.hyphen
+            hyphen: this.config.hyphen,
         });
         this.resize();
     }
@@ -476,7 +482,7 @@ class CanvasTextLayout {
             textOffsetIndex: 0,
             fontSize: this.config.fontSize,
             lineHeight: this.config.lineHeight,
-            hyphen: (_e = this.config.hyphen) !== null && _e !== void 0 ? _e : defaultConfig.hyphen
+            hyphen: (_e = this.config.hyphen) !== null && _e !== void 0 ? _e : defaultConfig.hyphen,
         });
         if (this.textToPageData && this.textToPageData[0]) {
             this.layoutPagesData = this.textToPageData.map(page => {
@@ -487,7 +493,7 @@ class CanvasTextLayout {
                     fontSize: this.config.fontSize,
                     lineHeight: this.config.lineHeight,
                     textAlign: this.config.textAlign,
-                    measures: (_b = (_a = this.measuredData) === null || _a === void 0 ? void 0 : _a.measures) !== null && _b !== void 0 ? _b : {}
+                    measures: (_b = (_a = this.measuredData) === null || _a === void 0 ? void 0 : _a.measures) !== null && _b !== void 0 ? _b : {},
                 });
             });
         }

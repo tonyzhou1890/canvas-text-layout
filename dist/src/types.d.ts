@@ -27,13 +27,12 @@ export interface TextToPageParams extends MeasureCharsReturns {
     lineHeight: number;
     hyphen: string;
 }
-export interface TextToPageReturns extends Array<{
+export type TextToPageReturns = Array<{
     page: number;
     startIndex: number;
     endIndex: number;
     rows: PageRow[];
-}> {
-}
+}>;
 export interface PageRow {
     startIndex: number;
     endIndex: number;
@@ -56,7 +55,7 @@ export type RectPosition = {
     width: number;
     height: number;
 };
-export interface LayoutReturns extends Array<{
+export type LayoutReturns = Array<{
     startIndex: number;
     endIndex: number;
     completed: boolean;
@@ -68,5 +67,4 @@ export interface LayoutReturns extends Array<{
     }[];
     charsRect: RectPosition;
     rowRect: RectPosition;
-}> {
-}
+}>;
