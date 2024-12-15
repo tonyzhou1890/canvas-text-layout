@@ -9,9 +9,9 @@ yarn add text-in-canvas
 ```
 
 ```javascript
-import CanvasTextLayout from 'text-in-canvas'
+import TextInCanvas from 'text-in-canvas'
 
-const ctl = new CanvasTextLayout({
+const ctl = new TextInCanvas({
   ctx
 })
 
