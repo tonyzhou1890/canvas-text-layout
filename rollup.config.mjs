@@ -36,7 +36,7 @@ export default [
     output: {
       dir: 'dist',
       format: 'umd',
-      name: 'CanvasTextLayout',
+      name: 'TextInCanvas',
       entryFileNames: '[name].umd.js',
       exports: 'named'
     },
@@ -47,7 +47,7 @@ export default [
     output: {
       dir: 'dist',
       format: 'umd',
-      name: 'CanvasTextLayout',
+      name: 'TextInCanvas',
       entryFileNames: '[name].umd.min.js',
       exports: 'named'
     },

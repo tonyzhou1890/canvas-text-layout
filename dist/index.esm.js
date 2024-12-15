@@ -447,7 +447,7 @@ function layout(param) {
     console.log('layout:', Date.now() - s);
     return res;
 }
-class CanvasTextLayout {
+class TextInCanvas {
     constructor(config) {
         this.config = config !== null && config !== void 0 ? config : {};
     }
@@ -514,4 +514,4 @@ class CanvasTextLayout {
     }
 }
 
-export { CanvasTextLayout as default, layout, measureChars, textToPage };
+export { TextInCanvas as default, layout, measureChars, textToPage };

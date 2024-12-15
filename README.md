@@ -1,15 +1,15 @@
-# canvas-text-layout
+# text-in-canvas
 
 这是一个 canvas 文本排版库，可以实现中英文在 canvas 上的排版渲染。这对于制作海报、小游戏等可能会有所帮助。
 
 ## 用法
 
 ```shell
-yarn add canvas-text-layout
+yarn add text-in-canvas
 ```
 
 ```javascript
-import CanvasTextLayout from 'canvas-text-layout'
+import CanvasTextLayout from 'text-in-canvas'
 
 const ctl = new CanvasTextLayout({
   ctx

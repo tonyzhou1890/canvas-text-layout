@@ -19,7 +19,7 @@ export declare function textToPage(param: TextToPageParams): TextToPageReturns;
  * @param {PageLayoutParams} param 参数对象
  */
 export declare function layout(param: PageLayoutParams): LayoutReturns;
-export default class CanvasTextLayout {
+export default class TextInCanvas {
     constructor(config?: UserConfig);
     config: UserConfig;
     measuredData?: MeasureCharsReturns;

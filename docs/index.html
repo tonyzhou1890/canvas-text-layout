@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Text Layout</title>
+  <title>Text In Canvas</title>
   <script src="../dist/index.umd.js"></script>
   <style>
     .main {
@@ -34,7 +34,7 @@
 </head>
 <body>
   <div class="main">
-    <h1 class="title">Canvas Text Layout</h1>
+    <h1 class="title">Text In Canvas</h1>
     <div class="workbench">
       <div class="btns">
         <!-- 文本 -->
@@ -101,7 +101,7 @@
 
     const ctx = canvasEl.getContext('2d')
 
-    const ctl = new CanvasTextLayout.default({
+    const ctl = new TextInCanvas.default({
       ctx,
       textAlign: textAlignEl.value
     })
@@ -205,9 +205,9 @@
   <div class="main">
     <h2>用法：</h2>
     <code>
-      import CanvasTextLayout from 'canvas-text-layout'
+      import TextInCanvas from 'text-in-canvas'
 
-      const ctl = new CanvasTextLayout({
+      const ctl = new TextInCanvas({
         ctx
       })
 

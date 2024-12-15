@@ -160,7 +160,7 @@ export function layout (param: PageLayoutParams) {
   return res
 }
 
-export default class CanvasTextLayout {
+export default class TextInCanvas {
   constructor (config?: UserConfig) {
     this.config = config ?? {}
   }
