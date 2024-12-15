@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Text Layout</title>
+  <script src="../dist/index.umd.js"></script>
+  <style>
+    .main {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .title {
+      text-align: center;
+    }
+    .btns {
+      text-align: center;
+    }
+    #canvas {
+      display: block;
+      width: 100%;
+      max-width: 1000px;
+      height: 50vh;
+      margin: 10px auto;
+      background-color: lightblue;
+    }
+
+    code {
+      display: block;
+      white-space: pre-wrap;
+      background-color: lightblue;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h1 class="title">Canvas Text Layout</h1>
+    <div class="workbench">
+      <div class="btns">
+        <!-- 文本 -->
+        <label for="text">文本</label>
+        <select name="text" id="text" value="论语">
+          <option value="论语">论语</option>
+          <option value="A Blot In The 'Scutcheon">A Blot In The 'Scutcheon</option>
+        </select>
+        <!-- 对齐 -->
+        <label for="text-align">对齐</label>
+        <select name="text-align" id="align" value="left">
+          <option value="left">left</option>
+          <option value="center">center</option>
+          <option value="right">right</option>
+          <option value="justify">justify</option>
+        </select>
+        <!-- 字体 -->
+        <label for="font-family">字体</label>
+        <select name="font-family" id="font-family" value="宋体">
+          <option value="宋体">宋体</option>
+          <option value="Aerial">Aerial</option>
+        </select>
+        <!-- 字体大小 -->
+        <label for="font-size">字体大小</label>
+        <select name="font-size" id="font-size" value="14">
+          <option value="14">14</option>
+          <option value="16">16</option>
+          <option value="18">18</option>
+        </select>
+        <!-- 行高 -->
+        <label for="line-height">行高</label>
+        <select name="line-height" id="line-height" value="1">
+          <option value="1">1</option>
+          <option value="1.5">1.5</option>
+          <option value="2">2</option>
+        </select>
+        <!-- 滚动方式 -->
+        <label for="scroll">滚动方式</label>
+        <select name="scroll" id="scroll" value="page">
+          <option value="page">翻页</option>
+          <option value="scroll">滚动</option>
+        </select>
+        <div>
+          <canvas id="canvas"></canvas>
+        </div>
+        <div class="info">
+          <p>字数：<span id="text-count"></span></p>
+          <p>耗时：<span id="time-cost"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const textEl = document.querySelector('#text')
+    const textAlignEl = document.querySelector('#align')
+    const fontFamily = document.querySelector('#font-family')
+    const fontSize = document.querySelector('#font-size')
+    const lineHeight = document.querySelector('#line-height')
+    const scrollEl = document.querySelector('#scroll')
+    const canvasEl = document.querySelector('#canvas')
+
+    const countEl = document.querySelector('#text-count')
+    const timeEl = document.querySelector('#time-cost')
+
+    const ctx = canvasEl.getContext('2d')
+
+    const ctl = new CanvasTextLayout.default({
+      ctx,
+      textAlign: textAlignEl.value
+    })
+
+    const state = {
+      page: 0,
+      offsetY: 0
+    }
+
+    async function start() {
+      countEl.value = ''
+      timeEl.value = ''
+      
+      const text = await (await fetch(`./text/${textEl.value}.txt`)).text()
+      resetCanvas()
+
+      const start = Date.now()
+
+      const res = ctl.run({
+        width: canvasEl.clientWidth,
+        height: canvasEl.clientHeight,
+        text,
+        fontSize: Number(fontSize.value ?? 14),
+        lineHeight: Number(lineHeight.value ?? 1)
+      })
+      rerender()
+
+      countEl.innerText = ctl.measuredData.textArray.length
+      timeEl.innerText = (Date.now() - start) + 'ms'
+    }
+
+    start()
+
+    window.onresize = rerender
+
+    function rerender() {
+      resetCanvas()
+      ctl.resize({
+        width: canvasEl.clientWidth,
+        height: scrollEl.value === 'page' ? canvasEl.clientHeight : Infinity,
+        textAlign: textAlignEl.value
+      })
+      console.log(ctx.font)
+      if (state.page >= ctl.layoutPagesData.length) {
+        state.page = ctl.layoutPagesData.length - 1
+      }
+      ctl.render({
+        page: state.page
+      })
+    }
+
+    function resetCanvas() {
+      const DPR = window.devicePixelRatio
+      canvasEl.width = canvasEl.clientWidth * DPR
+      canvasEl.height = canvasEl.clientHeight * DPR
+      ctx.scale(DPR, DPR)
+      ctx.font = `${fontSize.value ?? 14}px ${fontFamily.value ?? '宋体'}`
+      ctx.textBaseline="top"
+    }
+
+    textEl.onchange = () => {
+      start()
+    }
+
+    textAlignEl.onchange = () => {
+      rerender()
+    }
+
+    fontFamily.onchange = start
+    fontSize.onchange = start
+    lineHeight.onchange = start
+    scrollEl.onchange = () => {
+      state.offsetY = 0
+      rerender()
+    }
+
+    canvasEl.onwheel = (e) => {
+      e.preventDefault()
+      if (scrollEl.value === 'page') {
+        state.page = Math.min(Math.max(0, e.deltaY > 0 ? state.page + 1 : state.page - 1), ctl.layoutPagesData.length - 1)
+        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
+        ctl.render({
+          page: state.page
+        })
+      } else {
+        state.offsetY += e.deltaY > 0 ? 50 : -50
+        const rows = ctl.layoutPagesData[0]
+        const rect = rows[rows.length - 1].rowRect
+        const maxOffset = rect.y + rect.height - canvasEl.clientHeight
+        state.offsetY = Math.max(0, Math.min(state.offsetY, maxOffset))
+        console.log(state.offsetY)
+        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
+        ctl.render({
+          page: 0,
+          offsetY: -state.offsetY
+        })
+      }
+    }
+  </script>
+
+  <div class="main">
+    <h2>用法：</h2>
+    <code>
+      import CanvasTextLayout from 'canvas-text-layout'
+
+      const ctl = new CanvasTextLayout({
+        ctx
+      })
+
+      ctl.run({
+        width,
+        height,
+        text,
+        fontSize,
+        lineHeight,
+        textAlign
+      })
+
+      ctl.render({
+        offsetX,
+        offsetY,
+        page // page index
+      })
+    </code>
+    <p>这个包只有排版、渲染功能，响应式重渲染、翻页、滚动业务自行实现。</p>
+  </div>
+</body>
+</html>
