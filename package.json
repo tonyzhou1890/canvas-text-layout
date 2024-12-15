@@ -1,6 +1,6 @@
 {
-  "name": "canvas-text-layout",
-  "version": "0.1.0",
+  "name": "text-in-canvas",
+  "version": "0.1.1",
   "description": "",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tonyzhou1890/canvas-text-layout.git"
+    "url": "git+https://github.com/tonyzhou1890/text-in-canvas.git"
   },
   "bugs": {
-    "url": "https://github.com/tonyzhou1890/canvas-text-layout/issues"
+    "url": "https://github.com/tonyzhou1890/text-in-canvas/issues"
   },
-  "homepage": "https://github.com/tonyzhou1890/canvas-text-layout#readme",
+  "homepage": "https://github.com/tonyzhou1890/text-in-canvas#readme",
   "keywords": [
     "canvas text layout"
   ],
